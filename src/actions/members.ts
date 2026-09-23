@@ -75,7 +75,12 @@ export async function addWorkspaceMemberByEmail(
   );
 
   if (userError) {
-    return { error: userError.message, member: null };
+    const hint =
+      userError.message.includes("find_user_for_invite") ||
+      userError.message.includes("schema cache")
+        ? " Execute supabase/workspace_members.sql (ou fix-invite-rpc.sql) no SQL Editor do Supabase."
+        : "";
+    return { error: `${userError.message}${hint}`, member: null };
   }
 
   const target = Array.isArray(targets) ? targets[0] : targets;

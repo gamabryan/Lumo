@@ -35,6 +35,10 @@ Preencha no Supabase Dashboard (**Project Settings → API** ou botão **Connect
 - `supabase/workspace_members.sql` (membros da equipe / atribuição de tarefas)
 - `supabase/teams.sql` (equipes e vínculo a projetos)
 
+Se o convite de membros falhar com `find_user_for_invite` / schema cache, rode também:
+
+- `supabase/fix-invite-rpc.sql`
+
 Opcional (MVP / login sem confirmar email):
 
 - Desative **Confirm email** em Authentication → Providers → Email  
@@ -47,3 +51,18 @@ npm run dev
 ```
 
 Abra [http://localhost:3000](http://localhost:3000).
+
+## Deploy na Vercel
+
+1. Importe o repositório em [vercel.com/new](https://vercel.com/new) (GitHub: `bryanfernandesVPN/lumo`).
+2. Em **Environment Variables**, adicione (Production + Preview):
+
+| Nome | Valor |
+|------|--------|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL do projeto Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon / publishable key |
+
+3. Deploy. Anote a URL (ex.: `https://lumo-xxx.vercel.app`).
+4. No Supabase → **Authentication → URL Configuration**:
+   - **Site URL**: a URL da Vercel
+   - **Redirect URLs**: `https://SEU-PROJETO.vercel.app/**` (e `http://localhost:3000/**` para dev)
