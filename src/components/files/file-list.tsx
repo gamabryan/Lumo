@@ -120,7 +120,7 @@ export function FileList({
             <li
               key={file.id}
               className={cn(
-                "flex items-center gap-2 rounded-lg border border-border/60 bg-background px-2.5 py-2",
+                "flex items-center gap-2 rounded-lg border border-border/50 bg-background/80 px-2.5 py-2 dark:bg-black/25",
                 compact && "px-2 py-1.5"
               )}
             >
