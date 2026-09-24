@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Clock3 } from "lucide-react";
 import { LumoLogo } from "@/components/layout/lumo-logo";
 import { ProjectList } from "@/components/layout/project-list";
 import { TeamsDialog } from "@/components/layout/teams-dialog";
@@ -8,6 +11,7 @@ import { UserFooter } from "@/components/layout/user-footer";
 import { WorkspaceMembersDialog } from "@/components/layout/workspace-members-dialog";
 import { WorkspaceSwitcher } from "@/components/layout/workspace-switcher";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/stores/workspace-store";
 import type { AppShellData } from "@/lib/app-data";
 
@@ -16,7 +20,9 @@ type AppSidebarProps = {
 };
 
 export function AppSidebar({ data }: AppSidebarProps) {
+  const pathname = usePathname();
   const setShellData = useWorkspaceStore((s) => s.setShellData);
+  const timesheetActive = pathname.startsWith("/dashboard/timesheet");
 
   useEffect(() => {
     setShellData({
@@ -61,6 +67,18 @@ export function AppSidebar({ data }: AppSidebarProps) {
           initialTeams={data.teams}
           canManage={canManage}
         />
+        <Link
+          href="/dashboard/timesheet"
+          className={cn(
+            "flex items-center gap-2 rounded-xl px-2.5 py-2 text-sm transition-all duration-150",
+            timesheetActive
+              ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground shadow-sm ring-1 ring-brand/10"
+              : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+          )}
+        >
+          <Clock3 className="size-3.5 shrink-0 opacity-70" />
+          Timesheet
+        </Link>
       </div>
 
       <Separator className="mx-3 opacity-70" />

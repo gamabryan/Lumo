@@ -10,6 +10,7 @@ export type TaskStatus = "todo" | "in_progress" | "done";
 export type TaskPriority = "low" | "medium" | "high" | "urgent";
 export type MessagePriorityTag = "normal" | "important" | "urgent";
 export type WorkspaceRole = "owner" | "admin" | "member";
+export type TimeEntryKind = "project" | "admin";
 
 export type Database = {
   public: {
@@ -355,6 +356,67 @@ export type Database = {
           },
         ];
       };
+      time_entries: {
+        Row: {
+          id: string;
+          workspace_id: string;
+          project_id: string | null;
+          user_id: string;
+          kind: TimeEntryKind;
+          entry_date: string;
+          hours: number;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          workspace_id: string;
+          project_id?: string | null;
+          user_id: string;
+          kind?: TimeEntryKind;
+          entry_date: string;
+          hours: number;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          workspace_id?: string;
+          project_id?: string | null;
+          user_id?: string;
+          kind?: TimeEntryKind;
+          entry_date?: string;
+          hours?: number;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_workspace_id_fkey";
+            columns: ["workspace_id"];
+            isOneToOne: false;
+            referencedRelation: "workspaces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "time_entries_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "time_entries_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -376,6 +438,10 @@ export type Database = {
           email: string;
           avatar_url: string | null;
         }[];
+      };
+      is_allocated_to_project: {
+        Args: { p_project_id: string };
+        Returns: boolean;
       };
     };
     Enums: {
@@ -420,6 +486,15 @@ export type TaskWithAssignee = Task & {
 
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
 export type ProjectFile = Database["public"]["Tables"]["files"]["Row"];
+export type TimeEntry = Database["public"]["Tables"]["time_entries"]["Row"];
+
+export type AllocatedTimesheetProject = Pick<
+  Project,
+  "id" | "name" | "workspace_id"
+> & {
+  team_id: string;
+  teamName: string;
+};
 
 export type MessageWithSender = Message & {
   sender: Pick<User, "id" | "name" | "avatar_url">;

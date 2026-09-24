@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   DndContext,
   DragOverlay,
@@ -44,6 +44,8 @@ export function KanbanBoard({
   onTasksChange,
   onOpenTask,
 }: KanbanBoardProps) {
+  // Stable SSR/client id — @dnd-kit's module counter breaks under Strict Mode.
+  const dndContextId = useId();
   const [activeTask, setActiveTask] = useState<TaskWithAssignee | null>(null);
   const originStatus = useRef<TaskStatus | null>(null);
 
@@ -164,6 +166,7 @@ export function KanbanBoard({
   return (
     <div className="h-full overflow-auto px-5 py-5 md:px-6">
       <DndContext
+        id={dndContextId}
         sensors={sensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}

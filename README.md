@@ -34,6 +34,11 @@ Preencha no Supabase Dashboard (**Project Settings → API** ou botão **Connect
 - `supabase/storage.sql`
 - `supabase/workspace_members.sql` (membros da equipe / atribuição de tarefas)
 - `supabase/teams.sql` (equipes e vínculo a projetos)
+- `supabase/timesheet.sql` (lançamento de horas nos projetos alocados)
+
+Se o timesheet já estava aplicado e a regra de alocação mudou, rode também:
+
+- `supabase/fix-timesheet-allocation.sql`
 
 Se o convite de membros falhar com `find_user_for_invite` / schema cache, rode também:
 
