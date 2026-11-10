@@ -71,10 +71,7 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000).
 
-## Deploy na Vercel
 
-1. Importe o repositório em [vercel.com/new](https://vercel.com/new) (GitHub: `bryanfernandesVPN/lumo`).
-2. Em **Environment Variables**, adicione (Production + Preview):
 
 | Nome | Valor |
 |------|--------|
