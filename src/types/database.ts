@@ -11,6 +11,7 @@ export type TaskPriority = "low" | "medium" | "high" | "urgent";
 export type MessagePriorityTag = "normal" | "important" | "urgent";
 export type WorkspaceRole = "owner" | "admin" | "member";
 export type TimeEntryKind = "project" | "admin";
+export type PresenceStatus = "available" | "busy" | "away" | "offline";
 
 export type Database = {
   public: {
@@ -22,6 +23,7 @@ export type Database = {
           email: string;
           avatar_url: string | null;
           focus_mode_until: string | null;
+          presence_status: PresenceStatus;
           created_at: string;
         };
         Insert: {
@@ -30,6 +32,7 @@ export type Database = {
           email: string;
           avatar_url?: string | null;
           focus_mode_until?: string | null;
+          presence_status?: PresenceStatus;
           created_at?: string;
         };
         Update: {
@@ -38,6 +41,7 @@ export type Database = {
           email?: string;
           avatar_url?: string | null;
           focus_mode_until?: string | null;
+          presence_status?: PresenceStatus;
           created_at?: string;
         };
         Relationships: [];
@@ -449,6 +453,7 @@ export type Database = {
       task_priority: TaskPriority;
       message_priority_tag: MessagePriorityTag;
       workspace_role: WorkspaceRole;
+      presence_status: PresenceStatus;
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -466,14 +471,14 @@ export type WorkspaceMember =
 
 export type WorkspaceMemberProfile = Pick<
   User,
-  "id" | "name" | "email" | "avatar_url"
+  "id" | "name" | "email" | "avatar_url" | "presence_status"
 > & {
   role: WorkspaceRole;
 };
 
 export type TeamMemberProfile = Pick<
   User,
-  "id" | "name" | "email" | "avatar_url"
+  "id" | "name" | "email" | "avatar_url" | "presence_status"
 >;
 
 export type TeamWithMembers = Team & {
@@ -481,7 +486,7 @@ export type TeamWithMembers = Team & {
 };
 
 export type TaskWithAssignee = Task & {
-  assignee: Pick<User, "id" | "name" | "avatar_url"> | null;
+  assignee: Pick<User, "id" | "name" | "avatar_url" | "presence_status"> | null;
 };
 
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
@@ -497,6 +502,6 @@ export type AllocatedTimesheetProject = Pick<
 };
 
 export type MessageWithSender = Message & {
-  sender: Pick<User, "id" | "name" | "avatar_url">;
+  sender: Pick<User, "id" | "name" | "avatar_url" | "presence_status">;
   files?: ProjectFile[];
 };

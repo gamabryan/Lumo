@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, UsersRound } from "lucide-react";
 import { toast } from "sonner";
 import { createTeam, deleteTeam } from "@/actions/teams";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserStatusAvatar } from "@/components/presence/user-status-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,15 +33,6 @@ type TeamsDialogProps = {
   canManage: boolean;
   onTeamsChange?: (teams: TeamWithMembers[]) => void;
 };
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 export function TeamsDialog({
   workspaceId,
@@ -168,17 +159,14 @@ export function TeamsDialog({
                       className="flex items-center gap-1 rounded-md bg-muted/60 px-1.5 py-0.5"
                       title={member.email}
                     >
-                      <Avatar size="sm" className="size-4">
-                        {member.avatar_url ? (
-                          <AvatarImage
-                            src={member.avatar_url}
-                            alt={member.name}
-                          />
-                        ) : null}
-                        <AvatarFallback className="text-[8px]">
-                          {getInitials(member.name) || "U"}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserStatusAvatar
+                        userId={member.id}
+                        name={member.name}
+                        avatarUrl={member.avatar_url}
+                        size="sm"
+                        className="size-4"
+                        fallbackClassName="text-[8px]"
+                      />
                       <span className="max-w-20 truncate text-[11px]">
                         {member.name}
                       </span>
@@ -223,17 +211,12 @@ export function TeamsDialog({
                           : "hover:bg-muted/50"
                       )}
                     >
-                      <Avatar size="sm">
-                        {member.avatar_url ? (
-                          <AvatarImage
-                            src={member.avatar_url}
-                            alt={member.name}
-                          />
-                        ) : null}
-                        <AvatarFallback>
-                          {getInitials(member.name) || "U"}
-                        </AvatarFallback>
-                      </Avatar>
+                      <UserStatusAvatar
+                        userId={member.id}
+                        name={member.name}
+                        avatarUrl={member.avatar_url}
+                        size="sm"
+                      />
                       <span className="min-w-0 flex-1 truncate">
                         {member.name}
                       </span>

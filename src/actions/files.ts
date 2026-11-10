@@ -19,21 +19,6 @@ export async function getTaskFiles(taskId: string) {
   return { files: (data ?? []) as ProjectFile[], error: null };
 }
 
-export async function getMessageFiles(messageId: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("files")
-    .select("*")
-    .eq("message_id", messageId)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    return { files: [] as ProjectFile[], error: error.message };
-  }
-
-  return { files: (data ?? []) as ProjectFile[], error: null };
-}
-
 export async function deleteProjectFile(
   fileId: string,
   projectId: string

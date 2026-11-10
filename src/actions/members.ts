@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { normalizePresenceStatus } from "@/lib/presence";
 import type { WorkspaceMemberProfile } from "@/types/database";
 
 export async function getWorkspaceMembers(workspaceId: string) {
@@ -19,7 +20,7 @@ export async function getWorkspaceMembers(workspaceId: string) {
     .select(
       `
       role,
-      user:users!workspace_members_user_id_fkey ( id, name, email, avatar_url )
+      user:users!workspace_members_user_id_fkey ( id, name, email, avatar_url, presence_status )
     `
     )
     .eq("workspace_id", workspaceId)
@@ -36,6 +37,7 @@ export async function getWorkspaceMembers(workspaceId: string) {
         name: string;
         email: string;
         avatar_url: string | null;
+        presence_status?: string | null;
       } | null;
       if (!profile) return null;
       return {
@@ -43,6 +45,7 @@ export async function getWorkspaceMembers(workspaceId: string) {
         name: profile.name,
         email: profile.email,
         avatar_url: profile.avatar_url,
+        presence_status: normalizePresenceStatus(profile.presence_status),
         role: row.role,
       };
     })
@@ -123,6 +126,7 @@ export async function addWorkspaceMemberByEmail(
       name: target.name,
       email: target.email,
       avatar_url: target.avatar_url,
+      presence_status: "available",
       role: membership.role,
     } satisfies WorkspaceMemberProfile,
   };

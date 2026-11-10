@@ -83,7 +83,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         status,
         priority,
         created_at,
-        assignee:users!tasks_assignee_id_fkey ( id, name, avatar_url )
+        assignee:users!tasks_assignee_id_fkey ( id, name, avatar_url, presence_status )
       `
       )
       .eq("project_id", projectId)
@@ -98,7 +98,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         content,
         priority_tag,
         created_at,
-        sender:users!messages_sender_id_fkey ( id, name, avatar_url ),
+        sender:users!messages_sender_id_fkey ( id, name, avatar_url, presence_status ),
         files ( id, file_url, name, task_id, message_id, uploaded_by, created_at )
       `
       )
@@ -118,6 +118,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     id: member.id,
     name: member.name,
     avatar_url: member.avatar_url,
+    presence_status: member.presence_status,
   }));
 
   if (!workspaceMembers.length && profile) {
@@ -125,6 +126,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       id: profile.id,
       name: profile.name,
       avatar_url: profile.avatar_url,
+      presence_status: "available" as const,
     });
   }
 
@@ -137,6 +139,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         id: member.id,
         name: member.name,
         avatar_url: member.avatar_url,
+        presence_status: member.presence_status,
       }))
     : workspaceMembers;
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { normalizePresenceStatus } from "@/lib/presence";
 import type {
   TeamMemberProfile,
   TeamWithMembers,
@@ -19,6 +20,7 @@ function mapTeamRows(
         name: string;
         email: string;
         avatar_url: string | null;
+        presence_status?: string | null;
       } | null;
     }> | null;
   }>
@@ -29,7 +31,13 @@ function mapTeamRows(
     name: row.name,
     created_at: row.created_at,
     members: (row.team_members ?? [])
-      .map((tm) => tm.user)
+      .map((tm) => {
+        if (!tm.user) return null;
+        return {
+          ...tm.user,
+          presence_status: normalizePresenceStatus(tm.user.presence_status),
+        };
+      })
       .filter(Boolean) as TeamMemberProfile[],
   }));
 }
@@ -53,7 +61,7 @@ export async function getWorkspaceTeams(workspaceId: string) {
       name,
       created_at,
       team_members (
-        user:users!team_members_user_id_fkey ( id, name, email, avatar_url )
+        user:users!team_members_user_id_fkey ( id, name, email, avatar_url, presence_status )
       )
     `
     )
@@ -188,26 +196,4 @@ export async function assignTeamToProject(
   revalidatePath("/dashboard", "layout");
   revalidatePath(`/dashboard/projects/${projectId}`);
   return { error: null, project };
-}
-
-export async function getTeamMembers(teamId: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("team_members")
-    .select(
-      `
-      user:users!team_members_user_id_fkey ( id, name, email, avatar_url )
-    `
-    )
-    .eq("team_id", teamId);
-
-  if (error) {
-    return { members: [] as TeamMemberProfile[], error: error.message };
-  }
-
-  const members = (data ?? [])
-    .map((row) => row.user as unknown as TeamMemberProfile | null)
-    .filter(Boolean) as TeamMemberProfile[];
-
-  return { members, error: null };
 }

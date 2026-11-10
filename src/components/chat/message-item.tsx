@@ -1,8 +1,8 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { FileList } from "@/components/files/file-list";
+import { UserStatusAvatar } from "@/components/presence/user-status-avatar";
 import { getMessagePriorityLabel } from "@/lib/messages";
 import { cn } from "@/lib/utils";
 import {
@@ -17,15 +17,6 @@ type MessageItemProps = {
   projectId: string;
   currentUserId: string;
 };
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 function formatTime(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -77,17 +68,14 @@ export function MessageItem({
         muted && "opacity-50"
       )}
     >
-      <Avatar size="sm" className="mt-0.5 shrink-0">
-        {message.sender.avatar_url ? (
-          <AvatarImage
-            src={message.sender.avatar_url}
-            alt={message.sender.name}
-          />
-        ) : null}
-        <AvatarFallback className="bg-brand/15 text-[10px] font-semibold text-brand">
-          {getInitials(message.sender.name) || "U"}
-        </AvatarFallback>
-      </Avatar>
+      <UserStatusAvatar
+        userId={message.sender.id}
+        name={message.sender.name}
+        avatarUrl={message.sender.avatar_url}
+        size="sm"
+        className="mt-0.5 shrink-0"
+        fallbackClassName="bg-brand/15 text-[10px] font-semibold text-brand"
+      />
 
       <div
         className={cn(

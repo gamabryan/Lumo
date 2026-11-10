@@ -3,25 +3,19 @@
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { PresenceStatusMenu } from "@/components/presence/presence-status-menu";
+import { UserStatusAvatar } from "@/components/presence/user-status-avatar";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
-import type { User } from "@/types/database";
+import type { PresenceStatus, User } from "@/types/database";
 
 type UserFooterProps = {
-  profile: Pick<User, "name" | "email" | "avatar_url">;
+  profile: Pick<User, "id" | "name" | "email" | "avatar_url"> & {
+    presence_status?: PresenceStatus | null;
+  };
 };
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 export function UserFooter({ profile }: UserFooterProps) {
   const router = useRouter();
@@ -43,20 +37,21 @@ export function UserFooter({ profile }: UserFooterProps) {
 
   return (
     <div className="mx-2 mb-2 flex items-center gap-2 rounded-xl border border-border/40 bg-background/60 px-2 py-2.5 backdrop-blur-sm">
-      <Avatar size="sm" className="ring-1 ring-brand/15">
-        {profile.avatar_url ? (
-          <AvatarImage src={profile.avatar_url} alt={profile.name} />
-        ) : null}
-        <AvatarFallback className="bg-brand/10 text-[10px] text-brand">
-          {getInitials(profile.name) || "U"}
-        </AvatarFallback>
-      </Avatar>
+      <UserStatusAvatar
+        userId={profile.id}
+        name={profile.name}
+        avatarUrl={profile.avatar_url}
+        size="sm"
+        className="ring-1 ring-brand/15"
+        fallbackClassName="bg-brand/10 text-[10px] text-brand"
+      />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium leading-tight">
           {profile.name}
         </p>
         <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
       </div>
+      <PresenceStatusMenu initialStatus={profile.presence_status} />
       <ThemeToggle />
       <Button
         type="button"

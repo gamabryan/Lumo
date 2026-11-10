@@ -8,6 +8,7 @@ create extension if not exists "pgcrypto";
 create type public.task_status as enum ('todo', 'in_progress', 'done');
 create type public.task_priority as enum ('low', 'medium', 'high', 'urgent');
 create type public.message_priority_tag as enum ('normal', 'important', 'urgent');
+create type public.presence_status as enum ('available', 'busy', 'away', 'offline');
 
 -- Users (extends auth.users)
 create table public.users (
@@ -16,6 +17,7 @@ create table public.users (
   email text not null unique,
   avatar_url text,
   focus_mode_until timestamptz,
+  presence_status public.presence_status not null default 'available',
   created_at timestamptz not null default now()
 );
 

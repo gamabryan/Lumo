@@ -1,13 +1,26 @@
 # Lumo
 
-SaaS de colaboração leve para microequipes.
+**Colaboração leve para microequipes.** O Lumo junta num só lugar o que um time pequeno usa no dia a dia: projetos, tarefas, conversa e horas, sem a complexidade das ferramentas corporativas.
+
+## Funcionalidades
+
+- 🔐 **Autenticação** com Supabase Auth
+- 🗂️ **Workspaces e projetos**, com convite de membros
+- 📋 **Quadro kanban** com arrastar e soltar e atribuição de tarefas
+- 💬 **Chat em tempo real** por projeto, com mensagens prioritárias
+- 📎 **Arquivos** anexados aos projetos (Supabase Storage)
+- 👥 **Equipes** vinculadas a projetos
+- ⏱️ **Timesheet semanal** para os membros alocados lançarem horas
+- 🟢 **Presença**: status disponível/ocupado no avatar
+- 🌗 Tema claro e escuro
 
 ## Stack
 
-- Next.js (App Router) + TypeScript
-- Tailwind CSS + shadcn/ui
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Tailwind CSS 4 + shadcn/ui
 - Supabase (Auth, PostgreSQL, Realtime, Storage)
 - Zustand
+- dnd-kit (arrastar e soltar no kanban)
 
 ## Setup
 
@@ -35,6 +48,7 @@ Preencha no Supabase Dashboard (**Project Settings → API** ou botão **Connect
 - `supabase/workspace_members.sql` (membros da equipe / atribuição de tarefas)
 - `supabase/teams.sql` (equipes e vínculo a projetos)
 - `supabase/timesheet.sql` (lançamento de horas nos projetos alocados)
+- `supabase/presence.sql` (status disponível/ocupado no avatar)
 
 Se o timesheet já estava aplicado e a regra de alocação mudou, rode também:
 

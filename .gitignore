@@ -17,7 +17,7 @@
 /.next/
 /out/
 
-# productiono nome do projeto na Vercel via CLI (ex.: lumo-app
+# production
 /build
 
 # misc
@@ -41,6 +41,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-.vercel
-.env*

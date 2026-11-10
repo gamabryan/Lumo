@@ -17,7 +17,7 @@ const TASK_SELECT = `
   status,
   priority,
   created_at,
-  assignee:users!tasks_assignee_id_fkey ( id, name, avatar_url )
+  assignee:users!tasks_assignee_id_fkey ( id, name, avatar_url, presence_status )
 `;
 
 export async function createTask(input: {

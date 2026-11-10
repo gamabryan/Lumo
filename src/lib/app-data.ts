@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { normalizePresenceStatus } from "@/lib/presence";
 import type {
   Project,
   TeamWithMembers,
@@ -9,7 +10,10 @@ import type {
 } from "@/types/database";
 
 export type AppShellData = {
-  profile: Pick<User, "id" | "name" | "email" | "avatar_url">;
+  profile: Pick<
+    User,
+    "id" | "name" | "email" | "avatar_url" | "presence_status"
+  >;
   workspaces: Workspace[];
   activeWorkspace: Workspace;
   projects: Project[];
@@ -42,11 +46,18 @@ export async function getAppShellData(): Promise<AppShellData | null> {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("id, name, email, avatar_url")
+    .select("id, name, email, avatar_url, presence_status")
     .eq("id", user.id)
     .single();
 
   if (!profile) return null;
+
+  const shellProfile = {
+    ...profile,
+    presence_status: normalizePresenceStatus(
+      (profile as { presence_status?: string | null }).presence_status
+    ),
+  };
 
   const { data: memberships } = await supabase
     .from("workspace_members")
@@ -110,7 +121,7 @@ export async function getAppShellData(): Promise<AppShellData | null> {
         .select(
           `
         role,
-        user:users!workspace_members_user_id_fkey ( id, name, email, avatar_url )
+        user:users!workspace_members_user_id_fkey ( id, name, email, avatar_url, presence_status )
       `
         )
         .eq("workspace_id", activeWorkspace.id)
@@ -124,7 +135,7 @@ export async function getAppShellData(): Promise<AppShellData | null> {
         name,
         created_at,
         team_members (
-          user:users!team_members_user_id_fkey ( id, name, email, avatar_url )
+          user:users!team_members_user_id_fkey ( id, name, email, avatar_url, presence_status )
         )
       `
         )
@@ -139,6 +150,7 @@ export async function getAppShellData(): Promise<AppShellData | null> {
         name: string;
         email: string;
         avatar_url: string | null;
+        presence_status?: string | null;
       } | null;
       if (!member) return null;
       return {
@@ -146,6 +158,7 @@ export async function getAppShellData(): Promise<AppShellData | null> {
         name: member.name,
         email: member.email,
         avatar_url: member.avatar_url,
+        presence_status: normalizePresenceStatus(member.presence_status),
         role: row.role,
       };
     })
@@ -163,6 +176,7 @@ export async function getAppShellData(): Promise<AppShellData | null> {
           name: string;
           email: string;
           avatar_url: string | null;
+          presence_status?: string | null;
         } | null;
       }>;
     };
@@ -172,13 +186,19 @@ export async function getAppShellData(): Promise<AppShellData | null> {
       name: team.name,
       created_at: team.created_at,
       members: (team.team_members ?? [])
-        .map((tm) => tm.user)
+        .map((tm) => {
+          if (!tm.user) return null;
+          return {
+            ...tm.user,
+            presence_status: normalizePresenceStatus(tm.user.presence_status),
+          };
+        })
         .filter(Boolean) as TeamWithMembers["members"],
     };
   });
 
   return {
-    profile,
+    profile: shellProfile,
     workspaces,
     activeWorkspace,
     projects: projects ?? [],

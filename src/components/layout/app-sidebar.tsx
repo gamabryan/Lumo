@@ -10,6 +10,7 @@ import { TeamsDialog } from "@/components/layout/teams-dialog";
 import { UserFooter } from "@/components/layout/user-footer";
 import { WorkspaceMembersDialog } from "@/components/layout/workspace-members-dialog";
 import { WorkspaceSwitcher } from "@/components/layout/workspace-switcher";
+import { PresenceProvider } from "@/components/presence/presence-provider";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/stores/workspace-store";
@@ -41,6 +42,12 @@ export function AppSidebar({ data }: AppSidebarProps) {
 
   return (
     <aside className="glass-panel relative z-10 flex h-full w-[15.5rem] shrink-0 flex-col border-y-0 border-l-0 text-sidebar-foreground shadow-[4px_0_24px_-12px_oklch(0.3_0.02_250/0.18)]">
+      <PresenceProvider
+        workspaceId={data.activeWorkspace.id}
+        userId={data.profile.id}
+        status={data.profile.presence_status}
+      />
+
       <div className="px-3 pt-5 pb-3">
         <LumoLogo />
       </div>

@@ -22,7 +22,7 @@ import type {
 
 const CHAT_COLLAPSED_KEY = "lumo_chat_collapsed";
 
-type Member = Pick<User, "id" | "name" | "avatar_url">;
+type Member = Pick<User, "id" | "name" | "avatar_url" | "presence_status">;
 
 type ProjectWorkspaceProps = {
   projectId: string;

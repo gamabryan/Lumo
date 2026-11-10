@@ -7,7 +7,7 @@ import {
   addWorkspaceMemberByEmail,
   removeWorkspaceMember,
 } from "@/actions/members";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserStatusAvatar } from "@/components/presence/user-status-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,15 +32,6 @@ type WorkspaceMembersDialogProps = {
   canManage: boolean;
   onMembersChange?: (members: WorkspaceMemberProfile[]) => void;
 };
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 const roleLabel: Record<string, string> = {
   owner: "Dono",
@@ -127,14 +118,12 @@ export function WorkspaceMembersDialog({
               key={member.id}
               className="flex items-center gap-2 rounded-lg border border-border/60 px-2.5 py-2"
             >
-              <Avatar size="sm">
-                {member.avatar_url ? (
-                  <AvatarImage src={member.avatar_url} alt={member.name} />
-                ) : null}
-                <AvatarFallback>
-                  {getInitials(member.name) || "U"}
-                </AvatarFallback>
-              </Avatar>
+              <UserStatusAvatar
+                userId={member.id}
+                name={member.name}
+                avatarUrl={member.avatar_url}
+                size="sm"
+              />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   {member.name}

@@ -19,7 +19,7 @@ import type {
   User,
 } from "@/types/database";
 
-type Member = Pick<User, "id" | "name" | "avatar_url">;
+type Member = Pick<User, "id" | "name" | "avatar_url" | "presence_status">;
 
 type ProjectChatProps = {
   projectId: string;
@@ -79,7 +79,7 @@ export function ProjectChat({
 
       const { data } = await supabase
         .from("users")
-        .select("id, name, avatar_url")
+        .select("id, name, avatar_url, presence_status")
         .eq("id", row.sender_id)
         .maybeSingle();
 
@@ -89,6 +89,7 @@ export function ProjectChat({
           id: row.sender_id,
           name: "Membro",
           avatar_url: null,
+          presence_status: "available" as const,
         },
         files: (files ?? []) as ProjectFile[],
       };

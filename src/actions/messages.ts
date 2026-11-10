@@ -14,7 +14,7 @@ const MESSAGE_SELECT = `
   content,
   priority_tag,
   created_at,
-  sender:users!messages_sender_id_fkey ( id, name, avatar_url )
+  sender:users!messages_sender_id_fkey ( id, name, avatar_url, presence_status )
 `;
 
 export async function sendMessage(input: {
